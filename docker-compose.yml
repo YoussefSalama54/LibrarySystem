@@ -1,0 +1,36 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: library-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: library
+      MYSQL_USER: library_user
+      MYSQL_PASSWORD: VioleGrace54
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql-init:/docker-entrypoint-initdb.d
+
+
+  app:
+    build: .
+    container_name: library-system-app
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql
+      DB_USER: library_user
+      DB_PASSWORD: VioleGrace54
+      DB_NAME: library
+      DB_PORT: 3306
+    volumes:
+      - .:/usr/src/app
+
+volumes:
+  mysql_data:
